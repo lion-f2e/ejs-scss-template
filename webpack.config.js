@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -7,7 +8,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const getHTMLPath = (pageName) => `./src/views/pages/${pageName}.ejs`;
 const getEntryPath = (pageName) => `./src/_entries/${pageName}.entry.js`;
 
-const CSS_OUTPUT_FILENAME = "static/css/[name].css";
+const CSS_OUTPUT_FILENAME = "static/css/[name].bundle.css";
 const JS_OUTPUT_FILENAME = "static/js/[name].bundle.js";
 
 // Webpack Configuration --------------------------------------------------------
@@ -21,6 +22,7 @@ module.exports = (env) => {
   const plugins = [
     ...htmlPlugins,
     new MiniCssExtractPlugin({ filename: CSS_OUTPUT_FILENAME }),
+    new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
   ];
 
   return {
@@ -59,9 +61,17 @@ module.exports = (env) => {
           use: [
             MiniCssExtractPlugin.loader,
             "css-loader",
-            "postcss-loader",
+            { loader: "postcss-loader" },
             "sass-loader",
           ],
+        },
+        {
+          test: /\.(?:js|mjs|cjs)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: { presets: ["@babel/preset-env"] },
+          },
         },
       ],
     },
