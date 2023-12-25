@@ -66,6 +66,12 @@ module.exports = (env) => {
         },
       ],
     },
+    resolve: {
+      alias: {
+        "@scss": path.resolve(__dirname, "src/scss"),
+        "@js": path.resolve(__dirname, "src/js"),
+      },
+    },
   };
 };
 
