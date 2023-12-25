@@ -9,7 +9,6 @@ const getEntryPath = (pageName) => `./src/_entries/${pageName}.entry.js`;
 
 const CSS_OUTPUT_FILENAME = "static/css/[name].css";
 const JS_OUTPUT_FILENAME = "static/js/[name].bundle.js";
-const JS_OUTPUT_PATH = path.resolve(__dirname, "dist");
 
 // Webpack Configuration --------------------------------------------------------
 module.exports = (env) => {
@@ -17,10 +16,10 @@ module.exports = (env) => {
 
   const pageNames = getPageNames();
   const entryObj = getEntries(pageNames);
-  const htmlPagePlugins = getHTMLPagePlugins(pageNames);
+  const htmlPlugins = getHTMLPlugins(pageNames);
 
   const plugins = [
-    ...htmlPagePlugins,
+    ...htmlPlugins,
     new MiniCssExtractPlugin({ filename: CSS_OUTPUT_FILENAME }),
   ];
 
@@ -29,7 +28,7 @@ module.exports = (env) => {
     entry: entryObj,
     output: {
       filename: JS_OUTPUT_FILENAME,
-      path: JS_OUTPUT_PATH,
+      path: path.resolve(__dirname, "dist"),
       clean: true,
     },
     devtool: "inline-source-map",
@@ -94,7 +93,7 @@ function getEntries(pageNames) {
   return entryObj;
 }
 
-function getHTMLPagePlugins(pageNames) {
+function getHTMLPlugins(pageNames) {
   const htmlPages = pageNames.map(
     (pageName) =>
       new HtmlWebpackPlugin({
