@@ -1,6 +1,5 @@
 // Stylesheets
 import "@scss/core/all.scss";
-import "@scss/abstracts/all.scss";
 import "@scss/components/all.scss";
 import "@scss/layout/all.scss";
 import "@scss/pages/home.scss";
