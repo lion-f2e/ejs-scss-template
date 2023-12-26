@@ -10,6 +10,7 @@ const getEntryPath = (pageName) => `./src/_entries/${pageName}.entry.js`;
 
 const CSS_OUTPUT_FILENAME = "static/css/[name].bundle.css";
 const JS_OUTPUT_FILENAME = "static/js/[name].bundle.js";
+const ASSET_OUTPUT_FILENAME = "static/imgs/[name][ext]";
 
 // Webpack Configuration --------------------------------------------------------
 module.exports = (env) => {
@@ -17,13 +18,7 @@ module.exports = (env) => {
 
   const pageNames = getPageNames();
   const entryObj = getEntries(pageNames);
-  const htmlPlugins = getHTMLPlugins(pageNames);
-
-  const plugins = [
-    ...htmlPlugins,
-    new MiniCssExtractPlugin({ filename: CSS_OUTPUT_FILENAME }),
-    new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
-  ];
+  const htmlPlugins = generateHTMLPlugins(pageNames);
 
   return {
     mode: "none",
@@ -31,6 +26,7 @@ module.exports = (env) => {
     output: {
       filename: JS_OUTPUT_FILENAME,
       path: path.resolve(__dirname, "dist"),
+      assetModuleFilename: ASSET_OUTPUT_FILENAME,
       clean: true,
     },
     devtool: "inline-source-map",
@@ -38,7 +34,11 @@ module.exports = (env) => {
       static: path.join(__dirname, "dist"),
       watchFiles: ["src/**"],
     },
-    plugins,
+    plugins: [
+      ...htmlPlugins,
+      new MiniCssExtractPlugin({ filename: CSS_OUTPUT_FILENAME }),
+      new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
+    ],
     module: {
       rules: [
         {
@@ -73,6 +73,10 @@ module.exports = (env) => {
             options: { presets: ["@babel/preset-env"] },
           },
         },
+        {
+          test: /\.(jpe?g|png|gif|svg|webp|avif|ico)$/i,
+          type: "asset/resource",
+        },
       ],
     },
     resolve: {
@@ -99,11 +103,10 @@ function getEntries(pageNames) {
     acc[pageName] = getEntryPath(pageName);
     return acc;
   }, {});
-
   return entryObj;
 }
 
-function getHTMLPlugins(pageNames) {
+function generateHTMLPlugins(pageNames) {
   const htmlPages = pageNames.map(
     (pageName) =>
       new HtmlWebpackPlugin({
