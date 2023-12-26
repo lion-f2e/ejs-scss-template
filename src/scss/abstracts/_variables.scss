@@ -1,1 +1,9 @@
-$primary: #007bff;
+$primary: #f03742;
+$primary-light: #f5767e;
+
+$primary-gradient: linear-gradient(
+  to right,
+  rgba($primary, 1),
+  rgba($primary, 0.5)
+);
+ 
