@@ -1,2 +1,12 @@
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+    crossorigin="anonymous"></script>
+
+    <!-- script path processing disabled -->
+    <%_ if ( typeof filename != 'undefined' && typeof filename == 'string' && filename != '' ) { _%>
+    <script src="./static/js/backend/<%= filename %>Page.js"></script>
+    <script src="./static/js/<%= filename %>.bundle.js"></script>
+    <%_	} _%>
   </body>
 </html>

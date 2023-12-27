@@ -3,6 +3,7 @@ const fs = require("fs");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 // Configurations --------------------------------------------------------------
 const getHTMLPath = (pageName) => `./src/views/pages/${pageName}.ejs`;
@@ -38,6 +39,9 @@ module.exports = (env) => {
       ...htmlPlugins,
       new MiniCssExtractPlugin({ filename: CSS_OUTPUT_FILENAME }),
       new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
+      new CopyPlugin({
+        patterns: [{ from: "./src/js/backend", to: "./static/js/backend" }],
+      }),
     ],
     module: {
       rules: [
@@ -47,6 +51,18 @@ module.exports = (env) => {
             {
               loader: "html-loader",
               options: {
+                sources: {
+                  list: [
+                    "...",
+                    {
+                      tag: "script",
+                      attribute: "src",
+                      type: "src",
+                      // Disable processing of <script> tags
+                      filter: () => false,
+                    },
+                  ],
+                },
                 minimize: {
                   collapseWhitespace: false,
                   removeComments: false,
@@ -70,7 +86,7 @@ module.exports = (env) => {
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
-            options: { presets: ["@babel/preset-env"] },
+            options: { presets: [["@babel/preset-env", { modules: false }]] },
           },
         },
         {
@@ -114,6 +130,7 @@ function generateHTMLPlugins(pageNames) {
         template: getHTMLPath(pageName),
         minify: { collapseWhitespace: false },
         chunks: [pageName],
+        inject: false,
       }),
   );
   return htmlPages;
