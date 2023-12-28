@@ -130,7 +130,6 @@ function generateHTMLPlugins(pageNames) {
         template: getHTMLPath(pageName),
         minify: { collapseWhitespace: false },
         chunks: [pageName],
-        inject: false,
       }),
   );
   return htmlPages;
